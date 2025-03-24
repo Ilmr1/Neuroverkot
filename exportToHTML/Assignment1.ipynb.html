@@ -1,0 +1,79 @@
+<html>
+<head>
+<title>Assignment1.ipynb</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #cf8e6d;}
+.s2 { color: #bcbec4;}
+.s3 { color: #bcbec4;}
+.s4 { color: #6aab73;}
+.s5 { color: #2aacb8;}
+.ls0 { height: 1px; border-width: 0; color: #43454a; background-color:#43454a}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Assignment1.ipynb</font>
+</center></td></tr></table>
+<pre><span class="s0">#%% 
+</span><span class="s1">import </span><span class="s2">numpy </span><span class="s1">as </span><span class="s2">np</span>
+<span class="s1">import </span><span class="s2">pandas </span><span class="s1">as </span><span class="s2">pd</span>
+<span class="s1">import </span><span class="s2">matplotlib</span><span class="s3">.</span><span class="s2">pyplot </span><span class="s1">as </span><span class="s2">plt</span>
+<span class="s1">from </span><span class="s2">tensorflow </span><span class="s1">import </span><span class="s2">keras</span>
+<span class="s1">from </span><span class="s2">tensorflow</span><span class="s3">.</span><span class="s2">keras</span><span class="s3">.</span><span class="s2">models </span><span class="s1">import </span><span class="s2">Sequential</span>
+<span class="s1">from </span><span class="s2">tensorflow</span><span class="s3">.</span><span class="s2">keras</span><span class="s3">.</span><span class="s2">layers </span><span class="s1">import </span><span class="s2">Dense</span>
+<span class="s1">from </span><span class="s2">tensorflow</span><span class="s3">.</span><span class="s2">keras</span><span class="s3">.</span><span class="s2">utils </span><span class="s1">import </span><span class="s2">to_categorical</span>
+<span class="s1">from </span><span class="s2">sklearn</span><span class="s3">.</span><span class="s2">preprocessing </span><span class="s1">import </span><span class="s2">LabelEncoder</span><hr class="ls0"><span class="s0">#%% md 
+</span><span class="s2">## Step 1: Load the Data <hr class="ls0"></span><span class="s0">#%% 
+</span><span class="s2">url </span><span class="s3">= </span><span class="s4">&quot;https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data&quot;</span>
+<span class="s2">column_names </span><span class="s3">= [</span><span class="s4">'sepal_length'</span><span class="s3">, </span><span class="s4">'sepal_width'</span><span class="s3">, </span><span class="s4">'petal_length'</span><span class="s3">, </span><span class="s4">'petal_width'</span><span class="s3">, </span><span class="s4">'class'</span><span class="s3">]</span>
+<span class="s2">iris_data </span><span class="s3">= </span><span class="s2">pd</span><span class="s3">.</span><span class="s2">read_csv</span><span class="s3">(</span><span class="s2">url</span><span class="s3">, </span><span class="s2">header</span><span class="s3">=</span><span class="s1">None</span><span class="s3">, </span><span class="s2">names</span><span class="s3">=</span><span class="s2">column_names</span><span class="s3">)</span>
+
+<span class="s2">iris_data</span><span class="s3">.</span><span class="s2">head</span><span class="s3">()</span><hr class="ls0"><span class="s0">#%% md 
+</span><span class="s2">## Step 2: Preprocess the Data <hr class="ls0"></span><span class="s0">#%% 
+</span><span class="s2">iris_data </span><span class="s3">= </span><span class="s2">iris_data</span><span class="s3">.</span><span class="s2">sample</span><span class="s3">(</span><span class="s2">frac</span><span class="s3">=</span><span class="s5">1</span><span class="s3">, </span><span class="s2">random_state</span><span class="s3">=</span><span class="s5">42</span><span class="s3">).</span><span class="s2">reset_index</span><span class="s3">(</span><span class="s2">drop</span><span class="s3">=</span><span class="s1">True</span><span class="s3">)</span>
+
+<span class="s2">X </span><span class="s3">= </span><span class="s2">iris_data</span><span class="s3">.</span><span class="s2">iloc</span><span class="s3">[:, :-</span><span class="s5">1</span><span class="s3">].</span><span class="s2">values  </span><span class="s0"># Input features</span>
+<span class="s2">y </span><span class="s3">= </span><span class="s2">iris_data</span><span class="s3">.</span><span class="s2">iloc</span><span class="s3">[:, -</span><span class="s5">1</span><span class="s3">].</span><span class="s2">values   </span><span class="s0"># Target labels</span>
+
+<span class="s2">label_encoder </span><span class="s3">= </span><span class="s2">LabelEncoder</span><span class="s3">()</span>
+<span class="s2">y_encoded </span><span class="s3">= </span><span class="s2">label_encoder</span><span class="s3">.</span><span class="s2">fit_transform</span><span class="s3">(</span><span class="s2">y</span><span class="s3">)</span>
+<span class="s2">y_categorical </span><span class="s3">= </span><span class="s2">to_categorical</span><span class="s3">(</span><span class="s2">y_encoded</span><span class="s3">)</span>
+
+<span class="s2">X_normalized </span><span class="s3">= </span><span class="s2">X </span><span class="s3">/ </span><span class="s2">np</span><span class="s3">.</span><span class="s2">max</span><span class="s3">(</span><span class="s2">X</span><span class="s3">, </span><span class="s2">axis</span><span class="s3">=</span><span class="s5">0</span><span class="s3">)</span>
+
+<span class="s2">print</span><span class="s3">(</span><span class="s4">&quot;Input features shape:&quot;</span><span class="s3">, </span><span class="s2">X_normalized</span><span class="s3">.</span><span class="s2">shape</span><span class="s3">)</span>
+<span class="s2">print</span><span class="s3">(</span><span class="s4">&quot;Target labels shape:&quot;</span><span class="s3">, </span><span class="s2">y_categorical</span><span class="s3">.</span><span class="s2">shape</span><span class="s3">)</span><hr class="ls0"><span class="s0">#%% md 
+</span><span class="s2">## Step 3: Build the Neural Network Model <hr class="ls0"></span><span class="s0">#%% 
+# Define the model</span>
+<span class="s2">model </span><span class="s3">= </span><span class="s2">Sequential</span><span class="s3">([</span>
+    <span class="s2">Dense</span><span class="s3">(</span><span class="s5">10</span><span class="s3">, </span><span class="s2">activation</span><span class="s3">=</span><span class="s4">'relu'</span><span class="s3">, </span><span class="s2">input_shape</span><span class="s3">=(</span><span class="s5">4</span><span class="s3">,)),</span>
+    <span class="s2">Dense</span><span class="s3">(</span><span class="s5">3</span><span class="s3">, </span><span class="s2">activation</span><span class="s3">=</span><span class="s4">'softmax'</span><span class="s3">)</span>
+<span class="s3">])</span>
+
+<span class="s0"># Compile the model</span>
+<span class="s2">model</span><span class="s3">.</span><span class="s2">compile</span><span class="s3">(</span><span class="s2">optimizer</span><span class="s3">=</span><span class="s2">Adam</span><span class="s3">(</span><span class="s2">learning_rate</span><span class="s3">=</span><span class="s5">0.01</span><span class="s3">), </span><span class="s2">loss</span><span class="s3">=</span><span class="s4">'categorical_crossentropy'</span><span class="s3">, </span><span class="s2">metrics</span><span class="s3">=[</span><span class="s4">'accuracy'</span><span class="s3">])</span>
+
+<span class="s0"># Display the model summary</span>
+<span class="s2">model</span><span class="s3">.</span><span class="s2">summary</span><span class="s3">()</span><hr class="ls0"><span class="s0">#%% md 
+</span><span class="s2">## Step 4: Train the Model <hr class="ls0"></span><span class="s0">#%% 
+# Train the model with validation split</span>
+<span class="s2">history </span><span class="s3">= </span><span class="s2">model</span><span class="s3">.</span><span class="s2">fit</span><span class="s3">(</span><span class="s2">X_normalized</span><span class="s3">, </span><span class="s2">y_categorical</span><span class="s3">, </span><span class="s2">epochs</span><span class="s3">=</span><span class="s5">50</span><span class="s3">, </span><span class="s2">batch_size</span><span class="s3">=</span><span class="s5">5</span><span class="s3">, </span><span class="s2">validation_split</span><span class="s3">=</span><span class="s5">0.2</span><span class="s3">, </span><span class="s2">verbose</span><span class="s3">=</span><span class="s5">1</span><span class="s3">)</span><hr class="ls0"><span class="s0">#%% md 
+</span><span class="s2">## Step 5: Evaluate the Model <hr class="ls0"></span><span class="s0">#%% 
+# Evaluate the model on the training data</span>
+<span class="s2">train_loss</span><span class="s3">, </span><span class="s2">train_acc </span><span class="s3">= </span><span class="s2">model</span><span class="s3">.</span><span class="s2">evaluate</span><span class="s3">(</span><span class="s2">X_normalized</span><span class="s3">, </span><span class="s2">y_categorical</span><span class="s3">)</span>
+<span class="s2">print</span><span class="s3">(</span><span class="s4">f'Training accuracy: </span><span class="s1">{</span><span class="s2">train_acc</span><span class="s1">:</span><span class="s4">.2f</span><span class="s1">}</span><span class="s4">'</span><span class="s3">)</span><hr class="ls0"><span class="s0">#%% md 
+</span><span class="s2">## Step 6: Plot Training and Validation Accuracy <hr class="ls0"></span><span class="s0">#%% 
+# Plot training &amp; validation accuracy values</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">plot</span><span class="s3">(</span><span class="s2">history</span><span class="s3">.</span><span class="s2">history</span><span class="s3">[</span><span class="s4">'accuracy'</span><span class="s3">])</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">plot</span><span class="s3">(</span><span class="s2">history</span><span class="s3">.</span><span class="s2">history</span><span class="s3">[</span><span class="s4">'val_accuracy'</span><span class="s3">])</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">title</span><span class="s3">(</span><span class="s4">'Model accuracy'</span><span class="s3">)</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">ylabel</span><span class="s3">(</span><span class="s4">'Accuracy'</span><span class="s3">)</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">xlabel</span><span class="s3">(</span><span class="s4">'Epoch'</span><span class="s3">)</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">legend</span><span class="s3">([</span><span class="s4">'Train'</span><span class="s3">, </span><span class="s4">'Validation'</span><span class="s3">], </span><span class="s2">loc</span><span class="s3">=</span><span class="s4">'lower right'</span><span class="s3">)</span>
+<span class="s2">plt</span><span class="s3">.</span><span class="s2">show</span><span class="s3">()</span></pre>
+</body>
+</html>
